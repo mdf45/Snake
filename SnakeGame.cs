@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.IO;
@@ -31,15 +31,16 @@ namespace Snake
         private static readonly Int32 X = 80;
         private static readonly Int32 Y = 20;
 
-        public static String[] Names = new String[500];
-        public static String[] BestNames = new String[500];
-        public static String[] NBS = new String[500];
-        public static UInt64[] Scores = new UInt64[500];
-        public static UInt64[] BestScores = new UInt64[500];
-        public static UInt64[] SBS = new UInt64[500];
+        public static String[] Names = new String[1000];
+        public static String[] BestNames = new String[1000];
+        public static String[] NBS = new String[1000];
 
-        public static Boolean[] Modes = new Boolean[500];
-        public static Boolean[] MD = new Boolean[500];
+        public static UInt64[] Scores = new UInt64[1000];
+        public static UInt64[] BestScores = new UInt64[1000];
+        public static UInt64[] SBS = new UInt64[1000];
+
+        public static Boolean[] Modes = new Boolean[1000];
+        public static Boolean[] MD = new Boolean[1000];
 
         private static Int16 IndexOfNames = 0;
 
@@ -47,7 +48,6 @@ namespace Snake
         protected static int origCol;
 
         public static Boolean isEasy = false;
-        private static Boolean WasPlay = false;
 
         private static String BST = "";
 
@@ -367,8 +367,6 @@ namespace Snake
 
         static void Die(UInt64 Score)
         {
-            WasPlay = true;
-
             String text = "Game over!";
             String _Retry = "Enter - retry";
             String _BackToMenu = "Esc - back to menu";
@@ -539,31 +537,21 @@ namespace Snake
 
                             for (int i = 0; i < NBS.Length; i++)
                             {
-                                if (BestNames[i] == null)
-                                    break;
                                 NBS[i] = BestNames[i];
                             }
                             for (int i = 0; i < SBS.Length; i++)
                             {
-                                if (BestNames[i] == null)
-                                    break;
                                 SBS[i] = BestScores[i];
                             }
                             for (int i = 0; i < MD.Length; i++)
                             {
-                                if (BestNames[i] == null)
-                                    break;
                                 MD[i] = Modes[i];
                             }
 
                             for (int i = 0; i < NBS.Length - 1; i++)
                             {
-                                if (NBS[i] == null)
-                                    break;
                                 for (int j = 0; j < NBS.Length - i - 1; j++)
                                 {
-                                    if (NBS[j] == null)
-                                        break;
                                     if (SBS[j + 1] > SBS[j])
                                     {
                                         temp = SBS[j + 1];
@@ -897,31 +885,21 @@ namespace Snake
 
                             for (int i = 0; i < NBS.Length; i++)
                             {
-                                if (BestNames[i] == null)
-                                    break;
                                 NBS[i] = BestNames[i];
                             }
                             for (int i = 0; i < SBS.Length; i++)
                             {
-                                if (BestNames[i] == null)
-                                    break;
                                 SBS[i] = BestScores[i];
                             }
                             for (int i = 0; i < MD.Length; i++)
                             {
-                                if (BestNames[i] == null)
-                                    break;
                                 MD[i] = Modes[i];
                             }
 
                             for (int i = 0; i < NBS.Length - 1; i++)
                             {
-                                if (NBS[i] == null)
-                                    break;
                                 for (int j = 0; j < NBS.Length - i - 1; j++)
                                 {
-                                    if (NBS[j] == null)
-                                        break;
                                     if (SBS[j + 1] > SBS[j])
                                     {
                                         temp = SBS[j + 1];
@@ -1169,7 +1147,6 @@ namespace Snake
                         }
                         if (Names[i] == null)
                             break;
-                        WasPlay = false;
                     }
                     break;
                 }
@@ -1336,10 +1313,13 @@ namespace Snake
                         }
                     case 3:
                         CursorVisible = false;
-                        BST = JsonConvert.DeserializeObject<String>(File.ReadAllText(_BST));
+                        if (File.Exists(_BST))
+                        {
+                            BST = JsonConvert.DeserializeObject<String>(File.ReadAllText(_BST));
+                        }
                         ForegroundColor = ConsoleColor.Magenta;
                         Clear();
-                        if (BST != null)
+                        if (BST != null && !BST.Equals(""))
                         {
                             WriteLine("Best scores: ");
                             ForegroundColor = ConsoleColor.Blue;
@@ -1363,13 +1343,6 @@ namespace Snake
                         }
                     case 4:
                         Clear();
-                        ForegroundColor = ConsoleColor.Red;
-                        if (!WasPlay)
-                        {
-                            Anim1("You should play at least one time to change name!", 0, 0);
-                            ReadKey(true);
-                            goto back;
-                        }
                         ForegroundColor = ConsoleColor.Cyan;
                         Write("Currently name is ");
                         ForegroundColor = ConsoleColor.Green;
@@ -1408,7 +1381,6 @@ namespace Snake
                                     }
                                     if (Names[i] == null)
                                         break;
-                                    WasPlay = false;
                                 }
                                 break;
                             }
